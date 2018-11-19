@@ -21,6 +21,7 @@ val SIZE_FACTOR : Int = 3
 val scDiv : Double = 0.51
 val scGap : Float = 0.05f
 val BACK_COLOR : Int = Color.parseColor("#BDBDBD")
+val DELAY : Long = 30
 
 fun Int.getInverse() : Float = 1f / this
 
@@ -105,7 +106,7 @@ class ChromeBallStepView(ctx : Context) : View(ctx) {
             if (animated) {
                 cb()
                 try {
-                    Thread.sleep(50)
+                    Thread.sleep(DELAY)
                     view.invalidate()
                 } catch(ex : Exception) {
 
@@ -204,6 +205,7 @@ class ChromeBallStepView(ctx : Context) : View(ctx) {
         private var curr : ChromeBallStep = ChromeBallStep(0)
 
         fun render(canvas : Canvas, paint : Paint) {
+            canvas.drawColor(BACK_COLOR)
             curr.draw(canvas, paint)
             animator.animate {
                 curr.update {i, scl ->
