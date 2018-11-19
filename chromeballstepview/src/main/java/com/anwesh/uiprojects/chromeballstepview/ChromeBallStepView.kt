@@ -214,4 +214,12 @@ class ChromeBallStepView(ctx : Context) : View(ctx) {
             }
         }
     }
+
+    companion object {
+        fun create(activity : Activity) : ChromeBallStepView {
+            val view : ChromeBallStepView = ChromeBallStepView(activity)
+            activity.setContentView(view)
+            return view
+        }
+    }
 }
