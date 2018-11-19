@@ -15,42 +15,46 @@ import android.content.Context
 import android.util.Log
 
 val nodes : Int = 5
-val ball_color : Int = Color.parseColor("#1A237E")
-val arc_colors : Array<String> = arrayOf("#f44336", "#FDD835", "#388E3C")
+val ball_color : Int = Color.parseColor("#0288D1")
+val arc_colors : Array<String> = arrayOf("#ef5350", "#FDD835", "#43A047")
 val SIZE_FACTOR : Int = 3
-val STROKE_FACTOR : Int = 60
 val scDiv : Double = 0.51
 val scGap : Float = 0.05f
+val BACK_COLOR : Int = Color.parseColor("#BDBDBD")
 
 fun Int.getInverse() : Float = 1f / this
 
-fun Float.divideScale(i : Int, n : Int) : Float = Math.max(n.getInverse(), this - i * n.getInverse())
+fun Float.divideScale(i : Int, n : Int) : Float = Math.min(n.getInverse(), Math.max(0f, this - i * n.getInverse())) * n
 
 fun Float.getScaleFactor() : Float = Math.floor(this / scDiv).toFloat()
 
 fun Float.getMirrorValue(a : Int, b : Int) : Float = (1 - this) * a.getInverse() + this * b.getInverse()
 
-fun Float.updateScale(dir : Float, a : Int, b : Int) : Float = this.getMirrorValue(a, b) * dir * scGap
+fun Float.updateScale(dir : Float, a : Int, b : Int) : Float = getScaleFactor().getMirrorValue(a, b) * dir * scGap
 
 fun Canvas.drawCBSNode(i : Int, scale : Float, paint : Paint) {
     val w : Float = width.toFloat()
     val h : Float = height.toFloat()
     val gap : Float = w / (nodes + 1)
     val size : Float = gap / SIZE_FACTOR
-    val r : Float = size/3
+    val r : Float = size / 2
+    val r1 : Float = size / 1.8f
     val sc1 : Float = scale.divideScale(0, 2)
     val sc2 : Float = scale.divideScale(1, 2)
     save()
     translate(gap * (i + 1), h/2)
-    rotate(180f * sc2)
-    paint.color = ball_color
-    drawCircle(0f, 0f, r, paint)
+    rotate(120f + 90f * sc2)
     val deg : Float = 360f / arc_colors.size
+    Log.d("sc1","${sc1}")
     arc_colors.forEachIndexed {j, color ->
         val sc : Float = sc1.divideScale(j, arc_colors.size)
         paint.color = Color.parseColor(color)
-        drawArc(RectF(-size, -size, size, size), 0f, deg * sc, true, paint)
+        drawArc(RectF(-size, -size, size, size), deg * j, deg * sc, true, paint)
     }
+    paint.color = BACK_COLOR
+    drawCircle(0f, 0f, r1, paint)
+    paint.color = ball_color
+    drawCircle(0f, 0f, r, paint)
     restore()
 }
 
