@@ -191,4 +191,25 @@ class ChromeBallStepView(ctx : Context) : View(ctx) {
             curr.startUpdating(cb)
         }
     }
+
+    data class Renderer(var view : ChromeBallStepView) {
+        private val animator : Animator = Animator(view)
+
+        private var curr : ChromeBallStep = ChromeBallStep(0)
+
+        fun render(canvas : Canvas, paint : Paint) {
+            curr.draw(canvas, paint)
+            animator.animate {
+                curr.update {i, scl ->
+                    animator.stop()
+                }
+            }
+        }
+
+        fun handleTap() {
+            curr.startUpdating {
+                animator.start()
+            }
+        }
+    }
 }
