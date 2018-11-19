@@ -30,3 +30,25 @@ fun Float.getScaleFactor() : Float = Math.floor(this / scDiv).toFloat()
 fun Float.getMirrorValue(a : Int, b : Int) : Float = (1 - this) * a.getInverse() + this * b.getInverse()
 
 fun Float.updateScale(dir : Float, a : Int, b : Int) : Float = this.getMirrorValue(a, b) * dir * scGap
+
+fun Canvas.drawCBSNode(i : Int, scale : Float, paint : Paint) {
+    val w : Float = width.toFloat()
+    val h : Float = height.toFloat()
+    val gap : Float = w / (nodes + 1)
+    val size : Float = gap / SIZE_FACTOR
+    val r : Float = size/3
+    val sc1 : Float = scale.divideScale(0, 2)
+    val sc2 : Float = scale.divideScale(1, 2)
+    save()
+    translate(gap * (i + 1), h/2)
+    rotate(180f * sc2)
+    paint.color = ball_color
+    drawCircle(0f, 0f, r, paint)
+    val deg : Float = 360f / arc_colors.size
+    arc_colors.forEachIndexed {j, color ->
+        val sc : Float = sc1.divideScale(j, arc_colors.size)
+        paint.color = Color.parseColor(color)
+        drawArc(RectF(-size, -size, size, size), 0f, deg * sc, true, paint)
+    }
+    restore()
+}
